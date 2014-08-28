@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vjburra.todoapp"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="21" />
+ 
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <receiver android:name="com.vjburra.todoapp.AlarmReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.vjburra.todoapp.NotifHandler">
+        </receiver>
+        <receiver android:name="com.vjburra.todoapp.NotifHandlerTemp">
+        </receiver>
+        <activity
+            android:name="com.vjburra.todoapp.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.vjburra.todoapp.DisplayTaskInfo"
+            android:label="@string/title_activity_display_confirmation"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.vjburra.todoapp.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.vjburra.todoapp.CreateTask"
+            android:label="@string/title_activity_create_task"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.vjburra.todoapp.MainActivity" />
+        </activity>
+    </application>
+
+</manifest>

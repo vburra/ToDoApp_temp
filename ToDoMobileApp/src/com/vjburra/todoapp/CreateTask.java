@@ -1,24 +1,19 @@
 package com.vjburra.todoapp;
 
-//import java.sql.Date;
-//import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -26,13 +21,14 @@ import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.vjburra.todoapp.dbTransContract.dbEntry;
 //import android.support.v4.app.FragmentActivity;
@@ -43,11 +39,23 @@ public class CreateTask extends FragmentActivity
 
 	String date_type = "";
 	public static final String TASK_ID = "taskId";
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	SimpleDateFormat dateOnlyFormat = new SimpleDateFormat("yyyy-MM-dd");
+	SimpleDateFormat timeOnlyFormat = new SimpleDateFormat("HH:mm");
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_task);
+		
+		TextView sdtDef = (TextView) findViewById(R.id.startDate);
+		TextView stvDef = (TextView) findViewById(R.id.startTime);
+		
+		Calendar cal = Calendar.getInstance();
+		
+		sdtDef.setText(dateOnlyFormat.format(cal.getTimeInMillis()));
+		stvDef.setText(timeOnlyFormat.format(cal.getTimeInMillis()));
+		
 	}
 
 	@Override
@@ -69,7 +77,7 @@ public class CreateTask extends FragmentActivity
 		return super.onOptionsItemSelected(item);
 	}
 	
-public static class TimePickerFragment extends DialogFragment  {
+    public static class TimePickerFragment extends DialogFragment  {
 		
 		private OnTimeSetListener tmListener;
 		private Activity tmActivity;
@@ -91,15 +99,15 @@ public static class TimePickerFragment extends DialogFragment  {
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-		// Use the current time as the default values for the picker
-		final Calendar c = Calendar.getInstance();
-		int hour = c.get(Calendar.HOUR_OF_DAY);
-		int minute = c.get(Calendar.MINUTE);
+			// Use the current time as the default values for the picker
+			final Calendar c = Calendar.getInstance();
+			int hour = c.get(Calendar.HOUR_OF_DAY);
+			int minute = c.get(Calendar.MINUTE);
 		 
 		
-		// Create a new instance of TimePickerDialog and return it
-		return new TimePickerDialog(tmActivity, tmListener, hour, minute,
-		DateFormat.is24HourFormat(getActivity()));
+			// Create a new instance of TimePickerDialog and return it
+			return new TimePickerDialog(tmActivity, tmListener, hour, minute,
+					DateFormat.is24HourFormat(getActivity()));
 		}
 		
 		
@@ -121,7 +129,7 @@ public static class TimePickerFragment extends DialogFragment  {
 	    newFragment.show(getFragmentManager() , "timePicker");
 	}
 	
-public static final class DatePickerFragment extends DialogFragment  {
+    public static final class DatePickerFragment extends DialogFragment  {
 		
 		private OnDateSetListener tmListener;
 		private Activity tmActivity;
@@ -144,15 +152,13 @@ public static final class DatePickerFragment extends DialogFragment  {
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-		// Use the current time as the default values for the picker
-		final Calendar c = Calendar.getInstance();
-		int year = c.get(Calendar.YEAR);
-		int month = c.get(Calendar.MONTH);
-		int day = c.get(Calendar.DATE);
-		 
-		
-		// Create a new instance of TimePickerDialog and return it
-		return new DatePickerDialog(tmActivity, tmListener, year, month,day);
+			// Use the current time as the default values for the picker
+			final Calendar c = Calendar.getInstance();
+			int year = c.get(Calendar.YEAR);
+			int month = c.get(Calendar.MONTH);
+			int day = c.get(Calendar.DATE);
+			// Create a new instance of TimePickerDialog and return it
+			return new DatePickerDialog(tmActivity, tmListener, year, month,day);
 		}
 	}
 	
@@ -163,27 +169,46 @@ public static final class DatePickerFragment extends DialogFragment  {
 			//this.selectedHours = hourOfDay;
 			//this.selectedMins = minute;
 		TextView Dt;
+		//Spinner sp;
 		if(date_type.equalsIgnoreCase("STARTDATE"))
 		{
 			Dt = (TextView) findViewById(R.id.startDate);
+			//sp = (Spinner) findViewById(R.id.startDateSpinner);
 		}
 		else
 		{
 			Dt = (TextView) findViewById(R.id.endDate);
+			//sp = (Spinner) findViewById(R.id.startDateSpinner);
 			//Dt.VISIBLE = true;
 		}
-		String mnth,da;// = "" + month;
-		//String da = "" + day;;
-		if (month < 10) 
-			mnth = "0" + month;
-		else
-			mnth = "" + month;
-		if (day <10) 
-			da = "0" + day;
-		else
-			da = "" + day;
-	    Dt.setText( "" + year + "-" + mnth + "-" + da );//.getArguments("selectedHours");
+		Calendar selectedDate = Calendar.getInstance();
+		selectedDate.set(year, month, day,0,0,0);
+		
+		Dt.setText(dateOnlyFormat.format(selectedDate.getTimeInMillis()));
+		
+		
+//		String mnth,da;// = "" + month;
+//		//String da = "" + day;;
+//		if (month < 9) 
+//			mnth = "0" + (month+1);
+//		else
+//			mnth = "" + (month+1);
+//		if (day <10) 
+//			da = "0" + day;
+//		else
+//			da = "" + day;
+//		
+//		Dt.setText( "" + year + "-" + mnth + "-" + da );//.getArguments("selectedHours");
+//		
+//		List <String> lst = new ArrayList <String> ();
+//		lst.add("" + year + "-" + mnth + "-" + da );
+//		ArrayAdapter<String> adp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lst);
+//		adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		//sp.setOnItemClickListener(showDatePickerDialog);
+//	    
+//	    sp.setAdapter(adp);
 	}
+	
 	public void showDatePickerDialog(View v) {
 		date_type = "STARTDATE";
 		DatePickerFragment dtFragment = new DatePickerFragment();
@@ -223,7 +248,7 @@ public static final class DatePickerFragment extends DialogFragment  {
     	dbTransactionHelper dbHlpr = new dbTransactionHelper(getApplicationContext());
 		SQLiteDatabase dbw = dbHlpr.getWritableDatabase();
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
     	
     	ContentValues val = new ContentValues();
 		val.put(dbEntry.COLUMN_NAME_TITLE, title);
@@ -265,7 +290,9 @@ public static final class DatePickerFragment extends DialogFragment  {
 			
 			long freqTableID = dbw.insert(dbEntry.FREQUENCY_TABLE_NAME, null, freqVal);
 			val.put(dbEntry.COLUMN_NAME_FREQTABLE_ID, freqTableID);
-			nxtDt = generateNextAlarmDate(sdt, selectedDays, edt);
+			
+			computeNextAlarmDate newDtComp = new computeNextAlarmDate();
+			nxtDt = newDtComp.generateNextAlarmDate(sdt, selectedDays, edt,false);
 			
 		}
 		val.put(dbEntry.COLUMN_NAME_NEXT_TASK_AT, nxtDt);
@@ -277,148 +304,27 @@ public static final class DatePickerFragment extends DialogFragment  {
 		
 		long dbTaskId = dbw.insert(dbEntry.TASK_TABLE_NAME, null, val);
 		try {
-			setReminder(dateFormat.parse(nxtDt), dbTaskId, title, duration);
+			customReminders rem = new customReminders();
+			rem.setReminder(getApplicationContext(), dateFormat.parse(nxtDt), dbTaskId, title, duration);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.finish();
+		
+		//Close the view after saving to DB by calling this.finish();
+		closeTask();
 	}
 	
-		
-	public String generateNextAlarmDate(String sdt, Boolean [] selectedDays, String edt){
-			//Logic for NextTaskAt field
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String nxtDt = sdt;
-		Calendar calNow,calEnd,calStart;
-		calNow = calEnd = calStart = Calendar.getInstance();
-		//Calendar calStart = Calendar.getInstance();
-			try{
-				boolean flag = true;
-				Date tempDt = dateFormat.parse(sdt);
-				if(edt != null || edt != ""){
-					Date endDt = dateFormat.parse(edt);
-					//Calendar calEnd = Calendar.getInstance();
-					calEnd.set(endDt.getYear(), endDt.getMonth(), endDt.getDay(), endDt.getHours(), endDt.getMinutes());
-					if(calEnd.before(calNow)){
-						flag = false;
-					}
-				}
-				
-				
-				calStart.set(tempDt.getYear(), tempDt.getMonth(), tempDt.getDay(), tempDt.getHours(), tempDt.getMinutes());
-			
-				if(flag){
-					if(calNow.before(calStart)){
-						//check for freq is repeat
-						//nxtDt = calStart.toString();
-						if(!selectedDays[calStart.DAY_OF_WEEK])
-						{
-							for(Integer count =1; count<8; count++)
-							{
-								calStart.add(Calendar.DATE, count);
-								if(selectedDays[calStart.DAY_OF_WEEK])
-								{
-									break;
-								}
-							}
-						}
-						nxtDt = calStart.getTime().toString();
-					}
-					else if(calNow.after(calStart)){
-						//find next possible date
-						if(!selectedDays[calNow.DAY_OF_WEEK])
-						{
-							for(Integer count =1; count<8; count++)
-							{
-								calNow.add(Calendar.DATE, count);
-								if(selectedDays[calNow.DAY_OF_WEEK])
-								{
-									break;
-								}
-							}
-						}
-						nxtDt = calNow.get(Calendar.YEAR) + "-" +  calNow.get(Calendar.MONTH) + 
-								"-" +  calNow.get(Calendar.DATE) + " " +  calNow.get(Calendar.HOUR) 
-								+ ":" +  calNow.get(Calendar.MINUTE) + ":00";//.toString();
-					}
-					else{
-						nxtDt = calNow.get(Calendar.YEAR) + "-" +  calNow.get(Calendar.MONTH) + 
-								"-" +  calNow.get(Calendar.DATE) + " " +  calNow.get(Calendar.HOUR) 
-								+ ":" +  calNow.get(Calendar.MINUTE) + ":00";
-					}
-				}
-				else{
-					nxtDt = null;
-				}
-					
-			} catch (java.text.ParseException e) {
-				// TODO Auto-generated catch block
-					e.printStackTrace();
-			}
-		return nxtDt;
-	}
 	public void cancelTask(View view)
+	{
+		closeTask();
+	}
+	
+	public void closeTask()
 	{
 		this.finish();
 	}
 	
-	public void setReminder(Date nxtDt, long taskId, String title, Integer dur){
-    	Context ctx = getApplicationContext();
-    	AlarmManager amgr = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-    	
-    	Intent alarmIntent = new Intent(ctx, AlarmReceiver.class);
-    	alarmIntent.putExtra(dbEntry.COLUMN_NAME_TASK_ID, taskId);
-    	alarmIntent.putExtra(dbEntry.COLUMN_NAME_TITLE, title);
-    	alarmIntent.putExtra(dbEntry.COLUMN_NAME_PLANNED_START_TIME, nxtDt);
-    	alarmIntent.putExtra(dbEntry.COLUMN_NAME_PLANNED_DURATION, dur);
-    	
-    	PendingIntent pAlarmInt = PendingIntent.getBroadcast(ctx, 0, alarmIntent, 0);
-    	
-    	Calendar myCal = Calendar.getInstance();
-        //myCal.setTimeInMillis(90000);
-    	myCal.add(Calendar.SECOND, 5);
-    	//amgr.set(AlarmManager.RTC_WAKEUP, myCal.getTimeInMillis(), pAlarmInt);
-    	amgr.set(AlarmManager.RTC_WAKEUP, nxtDt.getTime(), pAlarmInt);
-    	//Log.v( TAG, "*****" + getString(R.string.user_name)+ "----" +  myCal.getTimeInMillis() + "####");
-    	
-    	Toast.makeText(getApplicationContext(),"Alarm set for testing " + nxtDt.getDate() + "/" + nxtDt.getHours() + ":" + nxtDt.getMinutes() + ":00" , Toast.LENGTH_LONG).show();
-    	//createNotification();
-	}
-	
-	/*public void createNotification(){
-		Intent resultIntent = new Intent(this, DisplayTaskInfo.class);
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-		stackBuilder.addParentStack(DisplayTaskInfo.class);
-		stackBuilder.addNextIntent(resultIntent);
-		PendingIntent resultPendingIntent =
-		        stackBuilder.getPendingIntent(
-		            0,
-		            PendingIntent.FLAG_UPDATE_CURRENT
-		        );
-		NotificationCompat.Builder mBuilder =
-		        new NotificationCompat.Builder(this)
-    			.setSmallIcon(R.drawable.ic_action_search)
-		        .setContentTitle("My notification")
-		        .addAction(R.drawable.ic_launcher, "Action1", resultPendingIntent)
-		        .addAction(R.drawable.ic_action_search, "Action2", resultPendingIntent)
-		        .setDefaults(Notification.DEFAULT_SOUND)
-		        .setContentText("Hello World!");
-		mBuilder.setContentIntent(resultPendingIntent);
-		NotificationManager mNotificationManager =
-		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		Integer mId = 312;
-		mNotificationManager.notify(mId, mBuilder.build());
-    }
-	    
-	*/
-	//public static final class newAlarmReceiver extends BroadcastReceiver {
-	//    @Override
-	//    public void onReceive(Context context, Intent intent) {
-	//        Toast.makeText(context, "Alarm worked.", Toast.LENGTH_LONG).show();
-
-	  //  }
-	 //}
 }
 
 

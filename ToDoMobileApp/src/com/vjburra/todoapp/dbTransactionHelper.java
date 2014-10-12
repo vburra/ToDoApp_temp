@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class dbTransactionHelper extends SQLiteOpenHelper {
 
 	public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "ToDoDB_Test7.db";
+    public static final String DATABASE_NAME = "ToDoDB_Test9.db";
     
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
@@ -51,7 +51,7 @@ public class dbTransactionHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + dbEntry.TRACKING_TABLE_NAME + " (" +
             dbEntry._ID + " INTEGER PRIMARY KEY," +
             dbEntry.COLUMN_NAME_TASK_ID + INT_TYPE + COMMA_SEP +	
-            dbEntry.COLUMN_NAME_PLANNED_START_TIME + TIME_TYPE + COMMA_SEP +
+            dbEntry.COLUMN_NAME_PLANNED_START_TIME + DATE_TIME_TYPE + COMMA_SEP +
             dbEntry.COLUMN_NAME_ACTUAL_TIMETAKEN + TIME_TYPE + COMMA_SEP +
             dbEntry.COLUMN_NAME_PLANNED_DURATION + INT_TYPE + COMMA_SEP +
             dbEntry.COLUMN_NAME_DISCARDED + TEXT_TYPE + COMMA_SEP +

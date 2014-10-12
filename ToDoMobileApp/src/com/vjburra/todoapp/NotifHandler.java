@@ -44,12 +44,13 @@ public class NotifHandler extends BroadcastReceiver {
 		Calendar calStart = Calendar.getInstance();
     	ContentValues val = new ContentValues();
     	Date tempDt = calNow.getTime();
-		try {
-			tempDt = dateFormat.parse(sdt);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	tempDt.setTime(Long.parseLong(sdt));
+//		try {
+//			tempDt = dateFormat.parse(sdt);
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
     	
 		calStart.set(tempDt.getYear(), tempDt.getMonth(), tempDt.getDay(), tempDt.getHours(), tempDt.getMinutes());
 		long delay = (calNow.getTimeInMillis() - calStart.getTimeInMillis())/(60*1000);
@@ -64,7 +65,11 @@ public class NotifHandler extends BroadcastReceiver {
 		
 		NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.cancel(notificationId);
-		
+        
+        updateNextAlarmTime nxtAlrmObj = new updateNextAlarmTime();
+        nxtAlrmObj.fetchRepeatInfo(taskId, context);
+        
+       
 	}
 
 }

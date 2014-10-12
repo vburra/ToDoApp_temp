@@ -14,7 +14,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,10 +25,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.support.v7.app.ActionBarActivity;
 
-//import android.support.v4.app.Fragment;
-import com.vjburra.todoapp.R;
 import com.vjburra.todoapp.dbTransContract.dbEntry;
+//import android.support.v4.app.Fragment;
 
 public class MainActivity extends ActionBarActivity{
 	
@@ -155,40 +154,7 @@ public class MainActivity extends ActionBarActivity{
     public void actionClicked(){
     	Log.v(TAG, "***********Action Click Called");
     	setReminder();
-    	/*
-		// Creates an explicit intent for an Activity in your app
-		Intent resultIntent = new Intent(this, DisplayTaskInfo.class);
 
-		// The stack builder object will contain an artificial back stack for the
-		// started Activity.
-		// This ensures that navigating backward from the Activity leads out of
-		// your application to the Home screen.
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-		// Adds the back stack for the Intent (but not the Intent itself)
-		stackBuilder.addParentStack(DisplayTaskInfo.class);
-		// Adds the Intent that starts the Activity to the top of the stack
-		stackBuilder.addNextIntent(resultIntent);
-		PendingIntent resultPendingIntent =
-		        stackBuilder.getPendingIntent(
-		            0,
-		            PendingIntent.FLAG_UPDATE_CURRENT
-		        );
-		NotificationCompat.Builder mBuilder =
-		        new NotificationCompat.Builder(this)
-    			.setSmallIcon(R.drawable.ic_action_search)
-		        .setContentTitle("My notification")
-		        .addAction(R.drawable.ic_launcher, "Action1", resultPendingIntent)
-		        .addAction(R.drawable.ic_action_search, "Action2", resultPendingIntent)
-		        .setDefaults(Notification.DEFAULT_SOUND)
-		        .setContentText("Hello World!");
-		mBuilder.setContentIntent(resultPendingIntent);
-		NotificationManager mNotificationManager =
-		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		
-		// mId allows you to update the notification later on.
-		Integer mId = 312;
-		mNotificationManager.notify(mId, mBuilder.build());
-		*/
     }
     
     private void startIntent(String msg){
@@ -259,29 +225,19 @@ public class MainActivity extends ActionBarActivity{
         		//btn.setTag(2, duration);
         		//btn.setTag(3, nextTaskAt);
         		//btn.setTag(4, "Record");
-        		btn.setText("Record");
-        		btn.setTextOn("Pause");// need to replace with custom style green/red/grey for tracking time
-        		btn.setTextOff("Record");
         		Calendar cal = Calendar.getInstance();
         		String tmpDt = "" + cal.YEAR + "-" + cal.MONTH + "-" + cal.DATE + " " + cal.HOUR + ":" + cal.MINUTE + ":00"; 
         		String tempStr[] = {taskID,duration,nextTaskAt,tmpDt,null};
+//        		btn.setText("Record");
+        		btn.setTextOn("Pause");// need to replace with custom style green/red/grey for tracking time
+        		btn.setTextOff("Record");
+        		
         		//btn.getTag();
         		btn.setTag(tempStr);
         		btn.setOnClickListener(new View.OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
-						//String label = this.
-						// TODO Auto-generated method stub
-				//		if(v.getTag(4) == "Record")
-					//	{
-							//btn.setText("Stop");
-						//}
-						//else
-						//{
-							//btn.setText("Record");
-						//}
-						//saveTrackingDetails(v.getTag(4), v.getTag(1),v.getTag(3),v.getTag(2));
 						String tempArr[] = (String []) v.getTag();
 						long id = saveTrackingDetails(tempArr);
 						tempArr[4] = Long.toString(id);
@@ -309,10 +265,6 @@ public class MainActivity extends ActionBarActivity{
 		java.util.Date startDate = new java.util.Date();
 		try {
 			startDate = dateFormat.parse(obj[3]);
-		} catch (ParseException e1) {
-			e1.printStackTrace();
-		}
-		try {
 			executeDt = dateFormat.parse(obj[2]);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -325,8 +277,8 @@ public class MainActivity extends ActionBarActivity{
     	if(obj[4] == null)
     	{
     		long stDelay = (startDate.getTime() - executeDt.getTime())/(1000*60*60);
-        	//Ignore delay by resetting it to ZERO if the delay is less than 10 mins
-        	if(stDelay < 10)
+        	//Ignore delay by resetting it to ZERO if the delay is less than 2 mins
+        	if(stDelay < 2)
         		stDelay = 0;
         	
     		val.put(dbEntry.COLUMN_NAME_TASK_ID, obj[0]);
@@ -336,8 +288,8 @@ public class MainActivity extends ActionBarActivity{
         	
         	long dbTaskId = dbw.insert(dbEntry.TRACKING_TABLE_NAME, null, val);
     		return dbTaskId;
-    	}else
-    	{
+    	}
+    	else{
     		Calendar cal = Calendar.getInstance();
     		long actualTimeTakenForTask = ((cal.getTimeInMillis() - startDate.getTime())/(1000*60*60));
         	

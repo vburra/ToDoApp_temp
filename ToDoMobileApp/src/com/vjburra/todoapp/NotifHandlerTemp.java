@@ -23,11 +23,10 @@ public class NotifHandlerTemp extends BroadcastReceiver {
 		String buttonClicked = intent.getStringExtra("buttonClicked");
 		String sdt = intent.getStringExtra(dbEntry.COLUMN_NAME_PLANNED_START_TIME);
 		Integer duration = intent.getIntExtra(dbEntry.COLUMN_NAME_PLANNED_DURATION,0);
-		Long taskId = intent.getLongExtra(dbEntry.COLUMN_NAME_TASK_ID,-1);
+		long taskId = intent.getLongExtra(dbEntry.COLUMN_NAME_TASK_ID,-1);
 		String discardFlag = "";
-		if(buttonClicked == "START")
+		if(buttonClicked.equalsIgnoreCase("START"))
 		{
-	    	
 			discardFlag = "N";
 		}
 		else
@@ -43,21 +42,22 @@ public class NotifHandlerTemp extends BroadcastReceiver {
 		Calendar calNow = Calendar.getInstance();
 		Calendar calStart = Calendar.getInstance();
     	ContentValues val = new ContentValues();
-    	Date tempDt = calNow.getTime();
-		try {
-			tempDt = dateFormat.parse(sdt);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-		calStart.set(tempDt.getYear(), tempDt.getMonth(), tempDt.getDay(), tempDt.getHours(), tempDt.getMinutes());
+    	//Date tempDt = calNow.getTime();
+    	//tempDt.setTime(Long.parseLong(sdt));
+//		try {
+//			tempDt = dateFormat.parse(sdt);
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//    	
+		calStart.setTimeInMillis(Long.parseLong(sdt));//(tempDt.getYear(), tempDt.getMonth()+1, tempDt.getDay(), tempDt.getHours(), tempDt.getMinutes());
 		long delay = (calNow.getTimeInMillis() - calStart.getTimeInMillis())/(60*1000);
     	
     	val.put(dbEntry.COLUMN_NAME_TASK_ID, taskId);
     	val.put(dbEntry.COLUMN_NAME_START_DELAY, delay);
 		val.put(dbEntry.COLUMN_NAME_PLANNED_DURATION, duration);
-		val.put(dbEntry.COLUMN_NAME_PLANNED_START_TIME, sdt);
+		val.put(dbEntry.COLUMN_NAME_PLANNED_START_TIME, dateFormat.format(calNow.getTime())) ;//calStartsdt);
 		val.put(dbEntry.COLUMN_NAME_DISCARDED, discardFlag);
 		
 		long dbRwoId = dbw.insert(dbEntry.TRACKING_TABLE_NAME, null, val);
@@ -65,6 +65,9 @@ public class NotifHandlerTemp extends BroadcastReceiver {
 		NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.cancel(notificationId);
 		
+        updateNextAlarmTime nxtAlrmObj = new updateNextAlarmTime();
+        nxtAlrmObj.fetchRepeatInfo(taskId, context);
+        
 	}
 
 }
